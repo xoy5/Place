@@ -67,13 +67,13 @@ function App() {
         </span>
       </p>
 
-      <DraggableCanvas>
-        <PixelGrid
-          grid={grid}
-          zoom={zoom}
-          selected={selected}
-          onSelect={setSelected}
-        />
+      <DraggableCanvas
+        zoom={zoom}
+        onZoom={(delta) =>
+          setZoom((z) => Math.min(5, Math.max(0.1, z + delta)))
+        }
+      >
+        <PixelGrid grid={grid} selected={selected} onSelect={setSelected} />
       </DraggableCanvas>
 
       <ButtonPutPixel
