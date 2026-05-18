@@ -1,3 +1,5 @@
+import { PIXEL_SIZE } from "../constants";
+
 function PixelGrid({ grid, selected, onSelect }) {
   return (
     <div style={{ display: "inline-block", border: "1px solid #ccc" }}>
@@ -8,14 +10,14 @@ function PixelGrid({ grid, selected, onSelect }) {
               key={ci}
               onClick={() => onSelect({ row: ri, col: ci })}
               style={{
-                width: 16,
-                height: 16,
+                width: PIXEL_SIZE,
+                height: PIXEL_SIZE,
                 background: color,
                 boxSizing: "border-box",
                 cursor: "crosshair",
                 outline:
                   selected?.row === ri && selected?.col === ci
-                    ? "2px solid #5ac"
+                    ? "1px solid #5ac"
                     : "1px solid #eee",
                 zIndex: selected?.row === ri && selected?.col === ci ? 1 : 0,
               }}

@@ -1,12 +1,11 @@
 import { useState } from "react";
+import { ROWS, COLS } from "./constants";
 
 import ColorPicker from "./components/ColorPicker";
 import PixelGrid from "./components/PixelGrid";
 import ButtonPutPixel from "./components/ButtonPutPixel";
 import DraggableCanvas from "./components/DraggableCanvas";
 
-const ROWS = 20;
-const COLS = 20;
 const COLORS = [
   "#000000",
   "#ffffff",

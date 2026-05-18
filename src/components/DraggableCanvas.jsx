@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { PIXEL_SIZE, ROWS, COLS, CANVAS_SIZE } from "../constants";
 
 function DraggableCanvas({ children, zoom, onZoom }) {
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [offset, setOffset] = useState({
+    x: (CANVAS_SIZE.width - COLS * PIXEL_SIZE) / 2,
+    y: (CANVAS_SIZE.height - ROWS * PIXEL_SIZE) / 2,
+  });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
@@ -42,8 +46,8 @@ function DraggableCanvas({ children, zoom, onZoom }) {
     <div
       style={{
         overflow: "hidden",
-        width: 600,
-        height: 600,
+        width: CANVAS_SIZE.width,
+        height: CANVAS_SIZE.height,
         border: "1px solid #ccc",
         position: "relative",
       }}
