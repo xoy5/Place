@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { PIXEL_SIZE, ROWS, COLS, CANVAS_SIZE } from "../constants";
+import { PIXEL_SIZE, ROWS, COLS, CANVAS_SIZE } from "../../../shared/constants";
 
 function DraggableCanvas({ children, zoom, onZoom }) {
   const [offset, setOffset] = useState({

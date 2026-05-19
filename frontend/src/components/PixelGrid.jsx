@@ -1,4 +1,4 @@
-import { PIXEL_SIZE } from "../constants";
+import { PIXEL_SIZE } from "../../../shared/constants";
 
 function PixelGrid({ grid, selected, onSelect }) {
   return (

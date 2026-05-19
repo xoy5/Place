@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { ROWS, COLS } from "./constants";
+import { useState, useEffect } from "react";
+import { ROWS, COLS } from "../../shared/constants";
+
+import socket from "./socket";
 
 import ColorPicker from "./components/ColorPicker";
 import PixelGrid from "./components/PixelGrid";
@@ -29,11 +31,31 @@ function App() {
   const [zoom, setZoom] = useState(1);
   const [selected, setSelected] = useState(null);
 
+  useEffect(() => {
+    socket.on("grid", (gridFromServer) => {
+      setGrid(gridFromServer);
+    });
+
+    socket.on("pixel_placed", ({ row, col, color }) => {
+      setGrid((g) =>
+        g.map((r, ri) =>
+          r.map((c, ci) => (ri === row && ci === col ? color : c)),
+        ),
+      );
+    });
+
+    return () => {
+      socket.off("grid");
+      socket.off("pixel_placed");
+    };
+  }, []);
+
   function paintPixel(row, col) {
-    const newGrid = grid.map((r, ri) =>
-      r.map((color, ci) => (ri === row && ci === col ? selectedColor : color)),
-    );
-    setGrid(newGrid);
+    // const newGrid = grid.map((r, ri) =>
+    //   r.map((color, ci) => (ri === row && ci === col ? selectedColor : color)),
+    // );
+    // setGrid(newGrid);
+    socket.emit("place_pixel", { row, col, color: selectedColor });
   }
 
   return (
