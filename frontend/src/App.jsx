@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { ROWS, COLS } from "../../shared/constants";
 
 import socket from "./socket";
 
@@ -19,14 +18,8 @@ const COLORS = [
   "#00ffff",
 ];
 
-function createGrid() {
-  return Array(ROWS)
-    .fill(null)
-    .map(() => Array(COLS).fill("#ffffff"));
-}
-
 function App() {
-  const [grid, setGrid] = useState(createGrid());
+  const [grid, setGrid] = useState([]);
   const [selectedColor, setSelectedColor] = useState("#000000");
   const [zoom, setZoom] = useState(1);
   const [selected, setSelected] = useState(null);
@@ -51,10 +44,6 @@ function App() {
   }, []);
 
   function paintPixel(row, col) {
-    // const newGrid = grid.map((r, ri) =>
-    //   r.map((color, ci) => (ri === row && ci === col ? selectedColor : color)),
-    // );
-    // setGrid(newGrid);
     socket.emit("place_pixel", { row, col, color: selectedColor });
   }
 

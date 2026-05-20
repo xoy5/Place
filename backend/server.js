@@ -1,3 +1,5 @@
+const { ROWS, COLS } = require("../shared/constants.js");
+const { Pool } = require("pg");
 const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
@@ -7,38 +9,49 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // adres frontendu
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
   },
+});
+
+const pool = new Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "place",
+  password: "postgres",
+  port: 5432,
 });
 
 app.use(cors());
 app.use(express.json());
 
-// tymczasowa mapa w pamięci (bez bazy na razie)
-const ROWS = 20;
-const COLS = 20;
 let grid = Array(ROWS)
   .fill(null)
   .map(() => Array(COLS).fill("#ffffff"));
 
-// REST API - pobierz mapę
+async function loadGrid() {
+  const result = await pool.query("SELECT row, col, color FROM pixels");
+  result.rows.forEach(({ row, col, color }) => {
+    grid[row][col] = color;
+  });
+}
+
 app.get("/grid", (req, res) => {
   res.json(grid);
 });
 
-// WebSocket - jak ktoś się połączy
 io.on("connection", (socket) => {
   console.log("Użytkownik połączony:", socket.id);
-
-  // wyślij aktualną mapę nowemu użytkownikowi
   socket.emit("grid", grid);
 
-  // jak ktoś postawi pixel
-  socket.on("place_pixel", ({ row, col, color }) => {
+  socket.on("place_pixel", async ({ row, col, color }) => {
     grid[row][col] = color;
-    // wyślij do WSZYSTKICH
     io.emit("pixel_placed", { row, col, color });
+
+    await pool.query(
+      "INSERT INTO pixels (row, col, color) VALUES ($1, $2, $3) ON CONFLICT (row, col) DO UPDATE SET color = $3",
+      [row, col, color],
+    );
   });
 
   socket.on("disconnect", () => {
@@ -46,6 +59,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log("Serwer działa na http://localhost:3000");
+loadGrid().then(() => {
+  server.listen(3000, () => {
+    console.log("Serwer działa na http://localhost:3000");
+  });
 });

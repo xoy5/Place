@@ -1,0 +1,17 @@
+\c place
+
+CREATE TABLE IF NOT EXISTS pixels (
+  row INTEGER NOT NULL,
+  col INTEGER NOT NULL,
+  color VARCHAR(7) NOT NULL DEFAULT '#ffffff',
+  updated_at TIMESTAMP DEFAULT NOW(),
+  PRIMARY KEY (row, col)
+);
+
+CREATE TABLE IF NOT EXISTS maps (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  rows INTEGER NOT NULL,
+  cols INTEGER NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
